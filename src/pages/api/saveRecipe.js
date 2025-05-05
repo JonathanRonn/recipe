@@ -4,11 +4,15 @@ export async function POST({ request }) {
   try {
     const recipe = await request.json();
     
-    if (!recipe.title || !recipe.ingredients || !recipe.instructions) {
-      return new Response(
-        JSON.stringify({ error: 'Missing required recipe data' }), 
-        { status: 400 }
-      );
+    if (
+       typeof recipe.title !== 'string'   || recipe.title.trim() === '' ||
+        !Array.isArray(recipe.ingredients) || recipe.ingredients.length === 0 ||
+        !Array.isArray(recipe.instructions)|| recipe.instructions.length === 0
+      ) {
+         return new Response(
+           JSON.stringify({ error: 'Missing required recipe data' }), 
+           { status: 400, headers: { 'Content-Type': 'application/json' } }
+         );
     }
     
     // Insert the new recipe
@@ -35,7 +39,6 @@ export async function POST({ request }) {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to save recipe',
-        details: error.message 
       }),
       { 
         status: 500,

@@ -2,15 +2,19 @@ import { db, Recipe, eq } from 'astro:db';
 
 export async function DELETE({ request }) {
   try {
-    const { id } = await request.json();
-    
-    if (!id) {
+    const body = await request.json();
+    const id = Number(body?.id);
+
+    if (!Number.isInteger(id) || id <= 0) {
       return new Response(
-        JSON.stringify({ error: 'Recipe ID is required' }), 
-        { status: 400 }
+        JSON.stringify({ error: 'Valid recipe ID is required' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
-    
+
     // Delete the recipe
     await db.delete(Recipe).where(eq(Recipe.id, id));
     
@@ -29,7 +33,6 @@ export async function DELETE({ request }) {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to delete recipe',
-        details: error.message 
       }),
       { 
         status: 500,
