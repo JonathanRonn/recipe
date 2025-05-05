@@ -1,12 +1,2 @@
 @import "tailwindcss/preflight";
 @import "tailwindcss";
-@tailwind utilities;
-
-/* Custom CSS can be added here */
-.max-h-90vh {
-  max-height: 90vh;
-}
-
-html, body {
-  scroll-behavior: smooth;
-}

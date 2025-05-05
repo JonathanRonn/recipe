@@ -136,20 +136,25 @@ import Layout from '../layouts/Layout.astro';
         saveButton.textContent = 'Saving...';
         saveButton.disabled = true;
         
-        // Save the recipe to local storage
-        const savedRecipes = JSON.parse(localStorage.getItem('recipes') || '[]');
+        // Save the recipe to database via API
+        const response = await fetch('/api/saveRecipe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(currentRecipe),
+        });
         
-        // Check if recipe with same title already exists
-        const exists = savedRecipes.some(recipe => recipe.title === currentRecipe.title);
+        const data = await response.json();
         
-        if (!exists) {
-          // Add date saved
-          currentRecipe.dateSaved = new Date().toISOString();
-          savedRecipes.push(currentRecipe);
-          localStorage.setItem('recipes', JSON.stringify(savedRecipes));
-          alert('Recipe saved successfully!');
+        if (!response.ok) {
+          if (response.status === 409) {
+            alert('This recipe is already in your collection!');
+          } else {
+            throw new Error(data.error || 'Failed to save recipe');
+          }
         } else {
-          alert('This recipe is already in your collection!');
+          alert('Recipe saved successfully!');
         }
         
         saveButton.textContent = 'Save to My Recipes';
