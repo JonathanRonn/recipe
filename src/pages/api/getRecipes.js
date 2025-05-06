@@ -1,6 +1,4 @@
-import { db } from 'astro:db';
-import { Recipe } from '../../../db/config.js';
-import { desc } from 'astro:db';
+import { db, Recipe } from 'astro:db';
 
 export async function GET() {
   try {
